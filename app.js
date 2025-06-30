@@ -1,8 +1,9 @@
-let btns = document.querySelectorAll(".btn");
+let cells = document.querySelectorAll(".cell");
 let resetBtn = document.querySelector("#reset");
 let newGame = document.querySelector("#newGame");
 let msgContainer = document.querySelector(".msg-container");
 let msg = document.querySelector("#msg");
+let container = document.querySelector(".container");
 
 let turnO = true;  //player O
 
@@ -16,62 +17,80 @@ const winPatterns = [
     [3,4,5],
     [6,7,8,]
 ];
-btns.forEach((btn) =>{
-    btn.addEventListener("click", () => {
-        console.log("Btn clicked");
+
+cells.forEach((cell) =>{
+    cell.addEventListener("click", () => {
         if(turnO){
-            btn.innerText = "X";
+            cell.innerText = "X";
             turnO = false;
         }
         else{
-            btn.innerText = "O";
+            cell.innerText = "O";
             turnO = true;
         }
-        btn.disabled = true;
-
+        cell.disabled = true;
         checkWinner();
     })
 });
 
 const resetGame = () => {
     turnO = true;
-    enaableBtn();
+    enableBtn();
     msgContainer.classList.add("hide");
+    container.classList.remove("hide");
 }
 
-const enaableBtn = () => {
-    for( let btn of btns) {
-        btn.disabled = false;
-        btn.innerText = "";
+const enableBtn = () => {
+    for( let cell of cells) {
+        cell.disabled = false;
+        cell.innerText = "";
     }
 }
 
 const disableBtn = () => {
-    for( let btn of btns) {
-        btn.disabled = true;
+    for( let cell of cells) {
+        cell.disabled = true;
     }
 }
 
 const showWinner = (winner) => {
-    msg.innerText = `Winner is ${winner}`;
+    msg.innerText = `Winner is ${winner} `;
     msgContainer.classList.remove("hide");
     disableBtn();
+
+    container.classList.add("hide");
 };
+
+const showDraw = () => {
+    msg.innerText = `It's a Draw !`;
+    msgContainer.classList.remove("hide");
+    container.classList.add("hide");
+}
 
 const checkWinner = () => {
     for(let pattern of winPatterns) {
-        let pos1 = btns[pattern[0]].innerText;
-        let pos2 = btns[pattern[1]].innerText;
-        let pos3 = btns[pattern[2]].innerText;
+        let pos1 = cells[pattern[0]].innerText;
+        let pos2 = cells[pattern[1]].innerText;
+        let pos3 = cells[pattern[2]].innerText;
 
         if (pos1 != "" && pos2 != "" && pos3 != "") {
             if (pos1 === pos2 && pos2 === pos3){
                 console.log("Winner",pos1);
                 showWinner(pos1);
+                return;
             }
         }
     }
-    
+    checkDraw();
 };
+
+const checkDraw = () => {
+    const isDraw = Array.from(cells).every(cell => cell.innerText !== "");
+    if (isDraw) {
+        showDraw(); 
+    }
+};
+
+
 newGame.addEventListener("click", resetGame);
 reset.addEventListener("click", resetGame);
